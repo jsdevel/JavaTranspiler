@@ -18,11 +18,6 @@ package me.joespencer;
 import java.io.File;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
-import me.joespencer.guides.AnnotationGuide;
-import me.joespencer.guides.ClassGuide;
-import me.joespencer.guides.EnumGuide;
-import me.joespencer.guides.GuideFactory;
-import me.joespencer.guides.InterfaceGuide;
 import me.joespencer.visitors.JavaTranspilerVisitor;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +30,6 @@ import static org.mockito.Mockito.*;
 public class JavaTranspilerTest {
    JavaTranspiler transpiler;
    JavaTranspilerVisitor mockVisitor;
-   GuideFactory mockGuideFactory;
    Class[] classes;
 
    @Before
@@ -46,35 +40,21 @@ public class JavaTranspilerTest {
          TimeUnit.class,
          Override.class
       };
-      mockGuideFactory=mock(GuideFactory.class);
-      when(mockGuideFactory.createAnnotationGuide(any(Class.class)))
-         .thenReturn(mock(AnnotationGuide.class));
-      when(mockGuideFactory.createClassGuide(any(Class.class)))
-         .thenReturn(mock(ClassGuide.class));
-      when(mockGuideFactory.createEnumGuide(any(Class.class)))
-         .thenReturn(mock(EnumGuide.class));
-      when(mockGuideFactory.createInterfaceGuide(any(Class.class)))
-         .thenReturn(mock(InterfaceGuide.class));
-      transpiler=new JavaTranspiler(classes, mockGuideFactory);
+      transpiler=new JavaTranspiler(classes);
       mockVisitor=mock(JavaTranspilerVisitor.class);
    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void constructor_should_not_accept_null_classes_array() {
-      new JavaTranspiler(null, mockGuideFactory);
+   @Test(expected = NullPointerException.class)
+   public void constructor_should_not_accept_a_null_array() {
+      new JavaTranspiler(null);
    }
 
    @Test(expected = IllegalArgumentException.class)
    public void constructor_should_not_accept_an_empty_array_of_classes() {
-      new JavaTranspiler(new Class[]{}, mockGuideFactory);
+      new JavaTranspiler(new Class[]{});
    }
 
-   @Test(expected = IllegalArgumentException.class)
-   public void constructor_should_not_acctp_a_null_guide_factory(){
-      new JavaTranspiler(classes, null);
-   }
-
-   @Test(expected = IllegalArgumentException.class)
+   @Test(expected = NullPointerException.class)
    public void transpiler_should_not_attempt_to_serve_null(){
       transpiler.serve(null);
    }
@@ -82,9 +62,9 @@ public class JavaTranspilerTest {
    @Test
    public void transpiler_should_be_able_to_serve_visitors(){
       transpiler.serve(mockVisitor);
-      verify(mockVisitor).visitAnnotationGuide(any(AnnotationGuide.class));
-      verify(mockVisitor).visitClassGuide(any(ClassGuide.class));
-      verify(mockVisitor).visitEnumGuide(any(EnumGuide.class));
-      verify(mockVisitor).visitInterfaceGuide(any(InterfaceGuide.class));
+      verify(mockVisitor).visitAnnotation(any(Class.class));
+      verify(mockVisitor).visitClass(any(Class.class));
+      verify(mockVisitor).visitEnum(any(Class.class));
+      verify(mockVisitor).visitInterface(any(Class.class));
    }
 }

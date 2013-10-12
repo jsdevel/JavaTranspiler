@@ -15,18 +15,13 @@
  */
 package me.joespencer.visitors;
 
-import me.joespencer.guides.AnnotationGuide;
-import me.joespencer.guides.ClassGuide;
-import me.joespencer.guides.EnumGuide;
-import me.joespencer.guides.InterfaceGuide;
-
 /**
  *
  * @author Joseph Spencer
  */
 public interface JavaTranspilerVisitor {
-   void visitAnnotationGuide(AnnotationGuide guide);
-   void visitClassGuide(ClassGuide guide);
-   void visitEnumGuide(EnumGuide guide);
-   void visitInterfaceGuide(InterfaceGuide guide);
+   void visitAnnotation(Class clazz);
+   void visitClass(Class clazz);
+   void visitEnum(Class clazz);
+   void visitInterface(Class clazz);
 }

@@ -15,7 +15,6 @@
  */
 package me.joespencer;
 
-import me.joespencer.guides.GuideFactory;
 import me.joespencer.visitors.JavaTranspilerVisitor;
 
 /**
@@ -23,15 +22,11 @@ import me.joespencer.visitors.JavaTranspilerVisitor;
  * @author Joseph Spencer
  */
 public class JavaTranspiler {
-   private final GuideFactory guideFactory;
    private final Class[] classes;
 
-   public JavaTranspiler(Class[] classes, GuideFactory guideFactory) {
+   public JavaTranspiler(Class[] classes) {
       if(classes == null){
-         throw new IllegalArgumentException("classes must be an array");
-      }
-      if(guideFactory == null){
-         throw new IllegalArgumentException("guideFactory shall not be null");
+         throw new NullPointerException("classes must not be null");
       }
 
       if(classes.length == 0){
@@ -39,29 +34,22 @@ public class JavaTranspiler {
       }
 
       this.classes=classes;
-      this.guideFactory=guideFactory;
    }
 
    public void serve(JavaTranspilerVisitor visitor){
       if(visitor == null){
-         throw new IllegalArgumentException("visitor was null");
+         throw new NullPointerException("visitor was null");
       }
 
       for(Class clazz:classes){
          if(clazz.isAnnotation()){
-            visitor.visitAnnotationGuide(
-               guideFactory.createAnnotationGuide(clazz)
-            );
+            visitor.visitAnnotation(clazz);
          } else if(clazz.isEnum()){
-            visitor.visitEnumGuide(
-               guideFactory.createEnumGuide(clazz)
-            );
+            visitor.visitEnum(clazz);
          } else if(clazz.isInterface()){
-            visitor.visitInterfaceGuide(
-               guideFactory.createInterfaceGuide(clazz)
-            );
+            visitor.visitInterface(clazz);
          } else {//it's just a plain old class
-            visitor.visitClassGuide(guideFactory.createClassGuide(clazz));
+            visitor.visitClass(clazz);
          }
       }
    }
